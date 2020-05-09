@@ -9,13 +9,19 @@ class TestBernsteinVazirani(unittest.TestCase):
         pass
 
     def test_find_a(self):
-        from BernsteinVazirani import create_func_helper
-        func = create_func_helper(5)
+        res = []
+        values = list(range(1, 32))
+        for i in values:
+            from BernsteinVazirani import create_func_helper
+            func = create_func_helper(i)
 
-        from BernsteinVazirani import Solver
-        result = Solver().solve(func)
-        self.assertEqual(5, result)
+            from BernsteinVazirani import Solver
+            res.append(Solver().solve(func))
+        self.assertListEqual(res, values)
 
 
+import warnings
 if __name__ == '__main__':
-    unittest.main()
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore', category=DeprecationWarning)
+        unittest.main()

@@ -5,3 +5,8 @@ def carry(circuit: QuantumCircuit, control_qubit1, control_qubit2, control_qubit
     circuit.ccx(control_qubit3, control_qubit1, target_qubit)
     circuit.cx(control_qubit2, control_qubit1)
     circuit.ccx(control_qubit2, control_qubit1, target_qubit)
+
+
+def sum_(circuit: QuantumCircuit, control_qubit1, control_qubit2, target_qubit):
+    circuit.cx(control_qubit1, target_qubit)
+    circuit.cx(control_qubit2, target_qubit)

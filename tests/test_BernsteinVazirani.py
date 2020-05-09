@@ -2,12 +2,6 @@ import unittest
 
 
 class TestBernsteinVazirani(unittest.TestCase):
-    def setUp(self) -> None:
-        pass
-
-    def tearDown(self) -> None:
-        pass
-
     def test_find_a(self):
         res = []
         values = list(range(1, 32))

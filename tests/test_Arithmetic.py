@@ -7,7 +7,7 @@ class TestArithmetic(unittest.TestCase):
         circuit = QuantumCircuit(4)
         circuit.initialize((0, 1), 0)
         circuit.initialize((0, 1), 1)
-        circuit.initialize((0, 1), 2)
+        circuit.initialize((1, 0), 2)
 
         from Arithmetic import right_carry
         right_carry(circuit, 0, 1, 2, 3)
@@ -15,14 +15,14 @@ class TestArithmetic(unittest.TestCase):
         from tools import get_max_result
         res = get_max_result(circuit)
 
-        self.assertEqual('1011', res)
+        self.assertEqual('1111', res)
 
     def test_LCarry(self):
         from qiskit import QuantumCircuit
         circuit = QuantumCircuit(4)
-        circuit.initialize((0, 1), 0)
+        circuit.initialize((1, 0), 0)
         circuit.initialize((0, 1), 1)
-        circuit.initialize((0, 1), 2)
+        circuit.initialize((1, 0), 2)
 
         from Arithmetic import LCarry
         circuit.append(LCarry, [0, 1, 2, 3])
@@ -30,14 +30,14 @@ class TestArithmetic(unittest.TestCase):
         from tools import get_max_result
         res = get_max_result(circuit)
 
-        self.assertEqual('1011', res)
+        self.assertEqual('1110', res)
 
     def test_RCarry(self):
         from qiskit import QuantumCircuit
         circuit = QuantumCircuit(4)
         circuit.initialize((0, 1), 0)
         circuit.initialize((0, 1), 1)
-        circuit.initialize((0, 1), 2)
+        circuit.initialize((1, 0), 2)
 
         from Arithmetic import RCarry
         circuit.append(RCarry, [0, 1, 2, 3])
@@ -45,7 +45,7 @@ class TestArithmetic(unittest.TestCase):
         from tools import get_max_result
         res = get_max_result(circuit)
 
-        self.assertEqual('1011', res)
+        self.assertEqual('1111', res)
 
     def test_sum_(self):
         from qiskit import QuantumCircuit
@@ -121,6 +121,7 @@ class TestArithmetic(unittest.TestCase):
 
                 from tools import get_max_result
                 res = get_max_result(circuit)
+                print(res)
 
                 a_res = res[7:]
                 b_res = res[3:7]

@@ -61,56 +61,28 @@ class TestArithmetic(unittest.TestCase):
 
         self.assertEqual('1011', res)
 
-    def test_left_sum(self):
-        from qiskit import QuantumCircuit
-        circuit = QuantumCircuit(3)
-        circuit.initialize((0, 1), 1)
-        circuit.initialize((0, 1), 2)
-
-        from Arithmetic import left_sum
-        left_sum(circuit, 0, 1, 2)
-
-        from tools import get_max_result
-        res = get_max_result(circuit)
-
-        self.assertEqual('110', res)
-
-    def test_right_sum(self):
+    def test_sum_(self):
         from qiskit import QuantumCircuit
         circuit = QuantumCircuit(3)
         circuit.initialize((0, 1), 0)
         circuit.initialize((0, 1), 1)
 
-        from Arithmetic import right_sum
-        right_sum(circuit, 0, 1, 2)
+        from Arithmetic import sum_
+        sum_(circuit, 0, 1, 2)
 
         from tools import get_max_result
         res = get_max_result(circuit)
 
         self.assertEqual('011', res)
 
-    def test_LSum(self):
-        from qiskit import QuantumCircuit
-        circuit = QuantumCircuit(3)
-        circuit.initialize((0, 1), 1)
-        circuit.initialize((0, 1), 2)
-
-        from Arithmetic import LSum
-        circuit.append(LSum, [0, 1, 2])
-
-        from tools import get_max_result
-        res = get_max_result(circuit)
-
-        self.assertEqual('110', res)
-
-    def test_RSum(self):
+    def test_Sum(self):
         from qiskit import QuantumCircuit
         circuit = QuantumCircuit(3)
         circuit.initialize((0, 1), 0)
         circuit.initialize((0, 1), 1)
 
-        from Arithmetic import RSum
-        circuit.append(RSum, [0, 1, 2])
+        from Arithmetic import Sum
+        circuit.append(Sum, [0, 1, 2])
 
         from tools import get_max_result
         res = get_max_result(circuit)
@@ -124,7 +96,7 @@ class TestArithmetic(unittest.TestCase):
             if bit == '1':
                 circuit.x(register[i])
 
-    def test_right_add(self):
+    def test_add(self):
         from qiskit import QuantumCircuit, QuantumRegister
         for i in range(8):
             for j in range(8):
@@ -135,8 +107,8 @@ class TestArithmetic(unittest.TestCase):
                 self.initialize_register_to_number(circuit, a, i)
                 self.initialize_register_to_number(circuit, b, j)
 
-                from Arithmetic import right_add
-                right_add(circuit, a, b, c)
+                from Arithmetic import add
+                add(circuit, a, b, c)
 
                 from tools import get_max_result
                 res = get_max_result(circuit)
@@ -145,7 +117,34 @@ class TestArithmetic(unittest.TestCase):
                 b_res = res[3:7]
 
                 self.assertEqual(i, int(a_res, 2))
-                self.assertEqual(i+j, int(b_res, 2))
+                self.assertEqual(i + j, int(b_res, 2))
+
+    def test_substract(self):
+        from qiskit import QuantumCircuit, QuantumRegister
+        for i in range(8):
+            for j in range(8):
+                a = QuantumRegister(3)
+                b = QuantumRegister(4)
+                c = QuantumRegister(3)
+                circuit = QuantumCircuit(a, b, c)
+                self.initialize_register_to_number(circuit, a, i)
+                self.initialize_register_to_number(circuit, b, j)
+
+                from Arithmetic import substract
+                substract(circuit, a, b, c)
+
+                from tools import get_max_result
+                res = get_max_result(circuit)
+
+                a_res = res[7:]
+                b_res = res[3:7]
+
+                self.assertEqual(i, int(a_res, 2))
+                print(j, '-', i, '=', int(b_res, 2))
+                if j >= i:
+                    self.assertEqual(j - i, int(b_res, 2))
+                else:
+                    self.assertEqual((2 ** 4) - (i - j), int(b_res, 2))
 
 
 if __name__ == '__main__':

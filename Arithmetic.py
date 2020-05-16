@@ -54,7 +54,7 @@ def right_sum(circuit: QuantumCircuit, q0, q1, q2):
 
 RSum = make_instruction('RSum', right_sum, 3)
 
-
+from tools import get_max_result
 def right_add(circuit: QuantumCircuit, a, b, c):
     """Downwards add"""
     assert a.size + 1 <= b.size, 'b register must be at least a.size + 1 long'
@@ -65,21 +65,22 @@ def right_add(circuit: QuantumCircuit, a, b, c):
     circuit.barrier()
 
     for i in range(n):
-        circuit.append(RCarry, [c[i], a[i], b[i], c[i + 1]])
-        # right_carry(circuit, c[i], a[i], b[i], c[i + 1])
-    circuit.append(RCarry, [c[n], a[n], b[n], b[n + 1]])
-    # right_carry(circuit, c[n], a[n], b[n], b[n + 1])
+        # circuit.append(RCarry, [c[i], a[i], b[i], c[i + 1]])
+        right_carry(circuit, c[i], a[i], b[i], c[i + 1])
+    # circuit.append(RCarry, [c[n], a[n], b[n], b[n + 1]])
+    right_carry(circuit, c[n], a[n], b[n], b[n + 1])
 
     circuit.cx(a[n], b[n])
     circuit.barrier()
 
-    circuit.append(RSum, [c[n], a[n], b[n]])
-    # right_sum(circuit, c[n], a[n], b[n])
+    # circuit.append(RSum, [c[n], a[n], b[n]])
+    right_sum(circuit, c[n], a[n], b[n])
     for i in reversed(range(n)):
-        circuit.append(LCarry, [c[i], a[i], b[i], c[i + 1]])
+        # circuit.append(LCarry, [c[i], a[i], b[i], c[i + 1]])
         # left_carry(circuit, c[i], a[i], b[i], c[i + 1])
-        circuit.append(RSum, [c[i], a[i], b[i]])
-        # right_sum(circuit, c[i], a[i], b[i])
+        right_carry(circuit, c[i], a[i], b[i], c[i + 1])
+        # circuit.append(RSum, [c[i], a[i], b[i]])
+        right_sum(circuit, c[i], a[i], b[i])
 
 
 def left_add(circuit: QuantumCircuit, a, b, c):

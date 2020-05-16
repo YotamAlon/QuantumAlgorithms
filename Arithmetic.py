@@ -66,3 +66,24 @@ def substract(circuit: QuantumCircuit, a, b, c):
     for i in reversed(range(n)):
         circuit.append(LCarry, [c[i], a[i], b[i], c[i + 1]])
 
+
+def add_mod_n(circuit, a_reg, b_reg, c_reg, n, n_reg, t):
+    add(circuit, a_reg, b_reg, c_reg)
+    substract(circuit, n_reg, b_reg, c_reg)
+
+    circuit.x(b_reg[-1])
+    circuit.cx(b_reg[-1], t)
+    circuit.x(b_reg[-1])
+
+    from tools import initialize_register_to_number
+    initialize_register_to_number(circuit, n_reg, n, conditional=t)
+
+    add(circuit, n_reg, b_reg, c_reg)
+
+    from tools import initialize_register_to_number
+    initialize_register_to_number(circuit, n_reg, n, conditional=t)
+
+    substract(circuit, a_reg, b_reg, c_reg)
+
+    circuit.cx(b_reg[-1], t)
+    add(circuit, a_reg, b_reg, c_reg)

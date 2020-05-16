@@ -129,6 +129,41 @@ class TestArithmetic(unittest.TestCase):
                 self.assertEqual((j - i) % (2 ** 4), int(b_res, 2))
                 self.assertEqual(0, int(c_res, 2))
 
+    def test_add_mod_n(self):
+        from qiskit import QuantumCircuit, QuantumRegister
+        for k in range(1, 8):
+            for i in range(k):
+                for j in range(k):
+                    a = QuantumRegister(3)
+                    b = QuantumRegister(4)
+                    c = QuantumRegister(3)
+                    n = QuantumRegister(3)
+                    t = QuantumRegister(1)
+                    circuit = QuantumCircuit(a, b, c, n, t)
+
+                    from tools import initialize_register_to_number
+                    initialize_register_to_number(circuit, a, i)
+                    initialize_register_to_number(circuit, b, j)
+                    initialize_register_to_number(circuit, n, k)
+
+                    from Arithmetic import add_mod_n
+                    add_mod_n(circuit, a, b, c, k, n, t)
+
+                    from tools import get_max_result
+                    res = get_max_result(circuit)
+
+                    a_res = res[11:]
+                    b_res = res[7:11]
+                    c_res = res[4:7]
+                    n_res = res[1:4]
+                    t_res = res[0]
+
+                    self.assertEqual(i, int(a_res, 2))
+                    self.assertEqual((i + j) % k, int(b_res, 2))
+                    self.assertEqual(0, int(c_res, 2))
+                    self.assertEqual(k, int(n_res, 2))
+                    self.assertEqual(0, int(t_res, 2))
+
 
 if __name__ == '__main__':
     unittest.main()

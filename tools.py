@@ -11,8 +11,11 @@ def get_max_result(circuit, shots=1):
     return max(counts, key=lambda x: counts[x])
 
 
-def initialize_register_to_number(circuit, register, num: int):
+def initialize_register_to_number(circuit, register, num: int, conditional=None):
     from numpy import binary_repr
     for i, bit in enumerate(binary_repr(num)[::-1]):
         if bit == '1':
-            circuit.x(register[i])
+            if conditional is None:
+                circuit.x(register[i])
+            else:
+                circuit.cx(conditional, register[i])

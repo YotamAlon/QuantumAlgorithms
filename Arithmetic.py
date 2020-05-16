@@ -14,10 +14,9 @@ def make_instruction(name, func, qbits):
 
 
 def left_carry(circuit: QuantumCircuit, q0, q1, q2, q3):
-    """Upwards carry"""
-    circuit.ccx(q1, q3, q0)
-    circuit.cx(q2, q1)
-    circuit.ccx(q1, q2, q0)
+    circuit.ccx(q0, q2, q3)
+    circuit.cx(q1, q2)
+    circuit.ccx(q1, q2, q3)
     circuit.barrier()
 
 
@@ -25,7 +24,6 @@ LCarry = make_instruction('LCarry', left_carry, 4)
 
 
 def right_carry(circuit: QuantumCircuit, q0, q1, q2, q3):
-    """Downwards carry"""
     circuit.ccx(q1, q2, q3)
     circuit.cx(q1, q2)
     circuit.ccx(q0, q2, q3)
@@ -36,7 +34,6 @@ RCarry = make_instruction('RCarry', right_carry, 4)
 
 
 def sum_(circuit: QuantumCircuit, q0, q1, q2):
-    """Downwards sum"""
     circuit.cx(q1, q2)
     circuit.cx(q0, q2)
     circuit.barrier()
@@ -46,7 +43,6 @@ Sum = make_instruction('Sum', sum_, 3)
 
 
 def add(circuit: QuantumCircuit, a, b, c):
-    """Downwards add"""
     assert a.size + 1 <= b.size, 'b register must be at least a.size + 1 long'
     assert a.size <= c.size, 'c register must be at least a.size long'
 
@@ -65,7 +61,6 @@ def add(circuit: QuantumCircuit, a, b, c):
 
 
 def substract(circuit: QuantumCircuit, a, b, c):
-    """Downwards substract"""
     assert a.size + 1 <= b.size, 'b register must be at least a.size + 1 long'
     assert a.size <= c.size, 'c register must be at least a.size long'
 

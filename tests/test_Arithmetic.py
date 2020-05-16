@@ -101,9 +101,11 @@ class TestArithmetic(unittest.TestCase):
 
                 a_res = res[7:]
                 b_res = res[3:7]
+                c_res = res[0:3]
 
                 self.assertEqual(i, int(a_res, 2))
                 self.assertEqual(i + j, int(b_res, 2))
+                self.assertEqual(0, int(c_res, 2))
 
     def test_substract(self):
         from qiskit import QuantumCircuit, QuantumRegister
@@ -124,12 +126,11 @@ class TestArithmetic(unittest.TestCase):
 
                 a_res = res[7:]
                 b_res = res[3:7]
+                c_res = res[0:3]
 
                 self.assertEqual(i, int(a_res, 2))
-                if j >= i:
-                    self.assertEqual(j - i, int(b_res, 2))
-                else:
-                    self.assertEqual((2 ** 4) - (i - j), int(b_res, 2))
+                self.assertEqual((j - i) % (2 ** 4), int(b_res, 2))
+                self.assertEqual(0, int(c_res, 2))
 
 
 if __name__ == '__main__':

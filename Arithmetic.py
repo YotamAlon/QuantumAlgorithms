@@ -13,30 +13,19 @@ def make_instruction(name, func, qbits):
     return circuit.to_instruction()
 
 
-def left_carry(circuit: QuantumCircuit, q0, q1, q2, q3):
-    circuit.ccx(q0, q2, q3)
-    circuit.cx(q1, q2)
-    circuit.ccx(q1, q2, q3)
-    circuit.barrier()
-
-
-LCarry = make_instruction('LCarry', left_carry, 4)
-
-
 def right_carry(circuit: QuantumCircuit, q0, q1, q2, q3):
     circuit.ccx(q1, q2, q3)
     circuit.cx(q1, q2)
     circuit.ccx(q0, q2, q3)
-    circuit.barrier()
 
 
 RCarry = make_instruction('RCarry', right_carry, 4)
+LCarry = RCarry.inverse()
 
 
 def sum_(circuit: QuantumCircuit, q0, q1, q2):
     circuit.cx(q1, q2)
     circuit.cx(q0, q2)
-    circuit.barrier()
 
 
 Sum = make_instruction('Sum', sum_, 3)

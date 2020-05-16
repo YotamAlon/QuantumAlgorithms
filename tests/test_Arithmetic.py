@@ -2,20 +2,6 @@ import unittest
 
 
 class TestArithmetic(unittest.TestCase):
-    def test_left_carry(self):
-        from qiskit import QuantumCircuit
-        circuit = QuantumCircuit(4)
-        circuit.initialize((0, 1), 0)
-        circuit.initialize((0, 1), 1)
-        circuit.initialize((0, 1), 2)
-
-        from Arithmetic import left_carry
-        left_carry(circuit, 0, 1, 2, 3)
-        from tools import get_max_result
-        res = get_max_result(circuit)
-
-        self.assertEqual('1011', res)
-
     def test_right_carry(self):
         from qiskit import QuantumCircuit
         circuit = QuantumCircuit(4)

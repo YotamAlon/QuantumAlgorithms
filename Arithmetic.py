@@ -45,7 +45,7 @@ def add(circuit: QuantumCircuit, a, b, c):
 
     circuit.append(Sum, [c[n], a[n], b[n]])
     for i in reversed(range(n)):
-        circuit.append(RCarry, [c[i], a[i], b[i], c[i + 1]])
+        circuit.append(LCarry, [c[i], a[i], b[i], c[i + 1]])
         circuit.append(Sum, [c[i], a[i], b[i]])
 
 
@@ -62,7 +62,7 @@ def substract(circuit: QuantumCircuit, a, b, c):
 
     circuit.cx(a[n], b[n])
 
-    circuit.append(RCarry, [c[n], a[n], b[n], b[n + 1]])
+    circuit.append(LCarry, [c[n], a[n], b[n], b[n + 1]])
     for i in reversed(range(n)):
-        circuit.append(RCarry, [c[i], a[i], b[i], c[i + 1]])
+        circuit.append(LCarry, [c[i], a[i], b[i], c[i + 1]])
 

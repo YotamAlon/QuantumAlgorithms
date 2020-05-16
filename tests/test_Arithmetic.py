@@ -121,13 +121,11 @@ class TestArithmetic(unittest.TestCase):
 
                 from tools import get_max_result
                 res = get_max_result(circuit)
-                print(res)
 
                 a_res = res[7:]
                 b_res = res[3:7]
 
                 self.assertEqual(i, int(a_res, 2))
-                print(j, '-', i, '=', int(b_res, 2))
                 if j >= i:
                     self.assertEqual(j - i, int(b_res, 2))
                 else:

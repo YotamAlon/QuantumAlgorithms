@@ -75,13 +75,6 @@ class TestArithmetic(unittest.TestCase):
 
         self.assertEqual('011', res)
 
-    @staticmethod
-    def initialize_register_to_number(circuit, register, num: int):
-        from numpy import binary_repr
-        for i, bit in enumerate(binary_repr(num)[::-1]):
-            if bit == '1':
-                circuit.x(register[i])
-
     def test_add(self):
         from qiskit import QuantumCircuit, QuantumRegister
         for i in range(8):
@@ -90,8 +83,10 @@ class TestArithmetic(unittest.TestCase):
                 b = QuantumRegister(4)
                 c = QuantumRegister(3)
                 circuit = QuantumCircuit(a, b, c)
-                self.initialize_register_to_number(circuit, a, i)
-                self.initialize_register_to_number(circuit, b, j)
+
+                from tools import initialize_register_to_number
+                initialize_register_to_number(circuit, a, i)
+                initialize_register_to_number(circuit, b, j)
 
                 from Arithmetic import add
                 add(circuit, a, b, c)
@@ -115,8 +110,10 @@ class TestArithmetic(unittest.TestCase):
                 b = QuantumRegister(4)
                 c = QuantumRegister(3)
                 circuit = QuantumCircuit(a, b, c)
-                self.initialize_register_to_number(circuit, a, i)
-                self.initialize_register_to_number(circuit, b, j)
+
+                from tools import initialize_register_to_number
+                initialize_register_to_number(circuit, a, i)
+                initialize_register_to_number(circuit, b, j)
 
                 from Arithmetic import substract
                 substract(circuit, a, b, c)

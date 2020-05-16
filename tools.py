@@ -9,3 +9,10 @@ def get_max_result(circuit, shots=1):
 
     counts = job.result().get_counts(circuit)
     return max(counts, key=lambda x: counts[x])
+
+
+def initialize_register_to_number(circuit, register, num: int):
+    from numpy import binary_repr
+    for i, bit in enumerate(binary_repr(num)[::-1]):
+        if bit == '1':
+            circuit.x(register[i])

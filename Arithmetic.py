@@ -32,10 +32,10 @@ Sum = make_instruction('Sum', sum_, 3)
 
 
 def add(circuit: QuantumCircuit, a, b, c):
-    assert a.size + 1 <= b.size, 'b register must be at least a.size + 1 long'
-    assert a.size <= c.size, 'c register must be at least a.size long'
+    assert len(a) + 1 <= len(b), 'b register must be at least a.size + 1 long'
+    assert len(a) <= len(c), 'c register must be at least a.size long'
 
-    n = a.size - 1
+    n = len(a) - 1
 
     for i in range(n):
         circuit.append(RCarry, [c[i], a[i], b[i], c[i + 1]])
@@ -50,10 +50,10 @@ def add(circuit: QuantumCircuit, a, b, c):
 
 
 def substract(circuit: QuantumCircuit, a, b, c):
-    assert a.size + 1 <= b.size, 'b register must be at least a.size + 1 long'
-    assert a.size <= c.size, 'c register must be at least a.size long'
+    assert len(a) + 1 <= len(b), 'b register must be at least len(a) + 1 long'
+    assert len(a) <= len(c), 'c register must be at least len(a) long'
 
-    n = a.size - 1
+    n = len(a) - 1
 
     for i in range(n):
         circuit.append(Sum, [c[i], a[i], b[i]])
@@ -67,26 +67,35 @@ def substract(circuit: QuantumCircuit, a, b, c):
         circuit.append(LCarry, [c[i], a[i], b[i], c[i + 1]])
 
 
-def add_mod_n(circuit, a_reg, b_reg, c_reg, n, n_reg, t):
-    add(circuit, a_reg, b_reg, c_reg)
-    substract(circuit, n_reg, b_reg, c_reg)
+def add_mod_n(circuit, a, b, extra, n: int):
+    assert n.bit_length() <= len(a), 'b register must be at least n.bit_length() - 1 long'
+    assert (len(a) * 2) + 1 <= len(extra), 'the extra register must be at least (len(a) * 2) + 1 long'
+    c = extra[:len(a)]
+    n_reg = extra[len(a):len(a) * 2]
+    t = extra[len(a) * 2]
 
-    circuit.x(b_reg[-1])
-    circuit.cx(b_reg[-1], t)
-    circuit.x(b_reg[-1])
+    from tools import initialize_register_to_number
+    initialize_register_to_number(circuit, n_reg, n)
+
+    add(circuit, a, b, c)
+    substract(circuit, n_reg, b, c)
+
+    circuit.x(b[-1])
+    circuit.cx(b[-1], t)
+    circuit.x(b[-1])
 
     from tools import initialize_register_to_number
     initialize_register_to_number(circuit, n_reg, n, conditional=t)
 
-    add(circuit, n_reg, b_reg, c_reg)
+    add(circuit, n_reg, b, c)
 
     from tools import initialize_register_to_number
     initialize_register_to_number(circuit, n_reg, n, conditional=t)
 
-    substract(circuit, a_reg, b_reg, c_reg)
+    substract(circuit, a, b, c)
 
-    circuit.cx(b_reg[-1], t)
-    add(circuit, a_reg, b_reg, c_reg)
+    circuit.cx(b[-1], t)
+    add(circuit, a, b, c)
 
 
 def generate_c_mult_y_mod_n(y):

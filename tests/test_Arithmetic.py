@@ -136,18 +136,15 @@ class TestArithmetic(unittest.TestCase):
                 for j in range(k):
                     a = QuantumRegister(3)
                     b = QuantumRegister(4)
-                    c = QuantumRegister(3)
-                    n = QuantumRegister(3)
-                    t = QuantumRegister(1)
-                    circuit = QuantumCircuit(a, b, c, n, t)
+                    extra = QuantumRegister(7)
+                    circuit = QuantumCircuit(a, b, extra)
 
                     from tools import initialize_register_to_number
                     initialize_register_to_number(circuit, a, i)
                     initialize_register_to_number(circuit, b, j)
-                    initialize_register_to_number(circuit, n, k)
 
                     from Arithmetic import add_mod_n
-                    add_mod_n(circuit, a, b, c, k, n, t)
+                    add_mod_n(circuit, a, b, extra, k)
 
                     from tools import get_max_result
                     res = get_max_result(circuit)
@@ -172,13 +169,15 @@ class TestArithmetic(unittest.TestCase):
                     a = QuantumRegister(3)
                     b = QuantumRegister(4)
                     c = QuantumRegister(3)
+                    e = QuantumRegister(3)
                     n = QuantumRegister(3)
                     t = QuantumRegister(1)
+                    cc = QuantumRegister(1)
                     circuit = QuantumCircuit(a, b, c, n, t)
 
                     from Arithmetic import generate_c_mult_y_mod_n
                     c_mult_a_mod_n = generate_c_mult_y_mod_n(i)
-                    c_mult_a_mod_n(circuit, a, b, c, k, n, t)
+                    c_mult_a_mod_n(circuit, a, b, cc, e, c, k, n, t)
 
                     from tools import get_max_result
                     res = get_max_result(circuit)

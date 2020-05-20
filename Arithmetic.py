@@ -84,18 +84,16 @@ def add_mod_n(circuit, a, b, extra, n: int):
     circuit.cx(b[-1], t)
     circuit.x(b[-1])
 
-    from tools import initialize_register_to_number
     initialize_register_to_number(circuit, n_reg, n, conditional=t)
-
     add(circuit, n_reg, b, c)
-
-    from tools import initialize_register_to_number
     initialize_register_to_number(circuit, n_reg, n, conditional=t)
 
     substract(circuit, a, b, c)
 
     circuit.cx(b[-1], t)
     add(circuit, a, b, c)
+
+    initialize_register_to_number(circuit, n_reg, n)
 
 
 def generate_c_mult_y_mod_n(y):

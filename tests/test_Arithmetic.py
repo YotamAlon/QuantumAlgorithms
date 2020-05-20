@@ -151,15 +151,11 @@ class TestArithmetic(unittest.TestCase):
 
                     a_res = res[11:]
                     b_res = res[7:11]
-                    c_res = res[4:7]
-                    n_res = res[1:4]
-                    t_res = res[0]
+                    extra = res[0:7]
 
                     self.assertEqual(i, int(a_res, 2))
                     self.assertEqual((i + j) % k, int(b_res, 2))
-                    self.assertEqual(0, int(c_res, 2))
-                    self.assertEqual(k, int(n_res, 2))
-                    self.assertEqual(0, int(t_res, 2))
+                    self.assertEqual(0, int(extra, 2))
 
     def test_c_mult_mod_n(self):
         from qiskit import QuantumCircuit, QuantumRegister

@@ -96,24 +96,27 @@ def add_mod_n(circuit, a, b, extra, n: int):
     initialize_register_to_number(circuit, n_reg, n)
 
 
-def generate_c_mult_y_mod_n(y):
+def generate_c_mult_y_mod_n(y, max_bit_length):
     from numpy import binary_repr
-    y_list = [int(bit) for bit in binary_repr(y)[::-1]]
+    y_list = [int(bit) for bit in binary_repr(y, max_bit_length)[::-1]]
 
-    def c_mult_y_mod_n(circuit, x_reg, y_reg, c, a_reg, c_reg, n, n_reg, t):
-        for i in range(x_reg.size):
+    def c_mult_y_mod_n(circuit, x, y, c, extra, n):
+        a_reg = extra[:len(x)]
+        new_extra = extra[len(x):]
+
+        for i in range(len(x)):
             from tools import initialize_register_to_number
-            initialize_register_to_number(circuit, a_reg, (2 ** i) * y_list[i], conditional=x_reg[i], conditional2=c)
+            initialize_register_to_number(circuit, a_reg, (2 ** i) * y_list[i], conditional=x[i], conditional2=c)
 
-            add_mod_n(circuit, a_reg, y_reg, c_reg, n, n_reg, t)
+            add_mod_n(circuit, a_reg, y, new_extra, n)
 
             from tools import initialize_register_to_number
-            initialize_register_to_number(circuit, a_reg, (2 ** i) * y_list[i], conditional=x_reg[i], conditional2=c)
+            initialize_register_to_number(circuit, a_reg, (2 ** i) * y_list[i], conditional=x[i], conditional2=c)
 
         circuit.x(c)
-        for i in range(x_reg.size):
+        for i in range(len(x)):
             from tools import initialize_register_to_number
-            initialize_register_to_number(circuit, y_reg[i], 1, conditional=x_reg[i], conditional2=c)
+            initialize_register_to_number(circuit, y[i:i + 1], 1, conditional=x[i], conditional2=c)
         circuit.x(c)
 
     return c_mult_y_mod_n

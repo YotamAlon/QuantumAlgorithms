@@ -81,26 +81,21 @@ class TestArithmetic(unittest.TestCase):
             for j in range(8):
                 a = QuantumRegister(3)
                 b = QuantumRegister(4)
-                c = QuantumRegister(3)
-                circuit = QuantumCircuit(a, b, c)
+                circuit = QuantumCircuit(a, b)
 
                 from tools import initialize_register_to_number
                 initialize_register_to_number(circuit, a, i)
                 initialize_register_to_number(circuit, b, j)
 
                 from Arithmetic import add
-                add(circuit, a, b, c)
+                add(circuit, a, b)
 
-                from tools import get_max_result
-                res = get_max_result(circuit)
+                from tools import get_numerical_register_results
+                a_res, b_res, extra = get_numerical_register_results(circuit, [len(a), len(b)])
 
-                a_res = res[7:]
-                b_res = res[3:7]
-                c_res = res[0:3]
-
-                self.assertEqual(i, int(a_res, 2))
-                self.assertEqual(i + j, int(b_res, 2))
-                self.assertEqual(0, int(c_res, 2))
+                self.assertEqual(i, a_res)
+                self.assertEqual(i + j, b_res)
+                self.assertEqual(0, extra)
 
     def test_substract(self):
         from qiskit import QuantumCircuit, QuantumRegister
@@ -108,26 +103,21 @@ class TestArithmetic(unittest.TestCase):
             for j in range(8):
                 a = QuantumRegister(3)
                 b = QuantumRegister(4)
-                c = QuantumRegister(3)
-                circuit = QuantumCircuit(a, b, c)
+                circuit = QuantumCircuit(a, b)
 
                 from tools import initialize_register_to_number
                 initialize_register_to_number(circuit, a, i)
                 initialize_register_to_number(circuit, b, j)
 
                 from Arithmetic import substract
-                substract(circuit, a, b, c)
+                substract(circuit, a, b)
 
-                from tools import get_max_result
-                res = get_max_result(circuit)
+                from tools import get_numerical_register_results
+                a_res, b_res, extra = get_numerical_register_results(circuit, [len(a), len(b)])
 
-                a_res = res[7:]
-                b_res = res[3:7]
-                c_res = res[0:3]
-
-                self.assertEqual(i, int(a_res, 2))
-                self.assertEqual((j - i) % (2 ** 4), int(b_res, 2))
-                self.assertEqual(0, int(c_res, 2))
+                self.assertEqual(i, a_res)
+                self.assertEqual((j - i) % (2 ** 4), b_res)
+                self.assertEqual(0, extra)
 
     def test_add_mod_n(self):
         from qiskit import QuantumCircuit, QuantumRegister
@@ -136,53 +126,47 @@ class TestArithmetic(unittest.TestCase):
                 for j in range(k):
                     a = QuantumRegister(3)
                     b = QuantumRegister(4)
-                    extra = QuantumRegister(7)
-                    circuit = QuantumCircuit(a, b, extra)
+                    circuit = QuantumCircuit(a, b)
 
                     from tools import initialize_register_to_number
                     initialize_register_to_number(circuit, a, i)
                     initialize_register_to_number(circuit, b, j)
 
                     from Arithmetic import add_mod_n
-                    add_mod_n(circuit, a, b, extra, k)
+                    add_mod_n(circuit, a, b, k)
 
-                    from tools import get_max_result
-                    res = get_max_result(circuit)
+                    from tools import get_numerical_register_results
+                    a_res, b_res, extra = get_numerical_register_results(circuit, [len(a), len(b)])
 
-                    a_res = res[11:]
-                    b_res = res[7:11]
-                    extra_res = res[0:7]
+                    self.assertEqual(i, a_res)
+                    self.assertEqual((i + j) % k, b_res)
+                    self.assertEqual(0, extra)
 
-                    self.assertEqual(i, int(a_res, 2))
-                    self.assertEqual((i + j) % k, int(b_res, 2))
-                    self.assertEqual(0, int(extra_res, 2))
-
-    def test_c_mult_mod_n(self):
+    def test_c_mult_a_mod_n(self):
         from qiskit import QuantumCircuit, QuantumRegister
-        for k in range(1, 8):
+        for k in range(1, 4):
             for i in range(k):
                 for j in range(k):
-                    x = QuantumRegister(3)
-                    y = QuantumRegister(4)
+                    x = QuantumRegister(max(j.bit_length(), 1))
+                    y = QuantumRegister((len(x) * (2 ** len(x))).bit_length() + 1)
                     c = QuantumRegister(1)
-                    extra = QuantumRegister(10)
+                    extra = QuantumRegister((len(y) - 1) * 2)
                     circuit = QuantumCircuit(x, y, c, extra)
 
                     from tools import initialize_register_to_number
                     initialize_register_to_number(circuit, x, j)
                     initialize_register_to_number(circuit, c, 1)
 
-                    from Arithmetic import generate_c_mult_y_mod_n
-                    c_mult_a_mod_n = generate_c_mult_y_mod_n(i, 3)
-                    c_mult_a_mod_n(circuit, x, y, c, extra, k)
+                    from Arithmetic import c_mult_a_mod_n
+                    c_mult_a_mod_n(circuit, x, y, c, extra, i, k)
 
                     from tools import get_max_result
                     res = get_max_result(circuit)
 
-                    x_res = res[15:]
-                    y_res = res[11:15]
-                    c_res = res[10]
-                    extra_res = res[:10]
+                    x_res = res[len(y) + len(extra) + 1:]
+                    y_res = res[len(extra) + 1:len(y) + len(extra) + 1]
+                    c_res = res[len(extra)]
+                    extra_res = res[:len(extra)]
 
                     self.assertEqual(j, int(x_res, 2))
                     self.assertEqual((j * i) % k, int(y_res, 2))
